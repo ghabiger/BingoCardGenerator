@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bingo Card Generator</title>
 <style type="text/css">
+    @media print {
+        html, body {
+            position: absolute;
+        }
+    }
+    body {
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
 	label,input, select {
 		display:block;
 	}
@@ -14,28 +22,57 @@
 	legend { font-weight: bold }
 	div.clear { clear:both; }
 	div.break { clear:both; page-break-after:always; break-after:always; }
+    .page-div {
+        background-image: url(images/bella-premium-bg2.png), url(images/bella-premium-bg.png);
+        background-repeat: no-repeat, no-repeat;
+        background-size: 100%, 116%;
+        background-position: 285px 451px, -730px;
+        size: A5;
+        margin: 0;
+        height: 148.5mm;
+        width: 210mm;
+        display: block;
+        float: left;
+    }
+    .page-div h1 {
+        font-family: 'Cassandra Personal Use';
+        text-align: center;
+        margin: 10mm 0 10mm 0;
+    }
 	table {
-		background-color:black;
-		border-collapse:collapse;
-		margin-bottom:1em;
-		margin-right:1em;
-		float:left;
-	}
+        margin-left: auto;
+        margin-right: auto;
+        border-spacing: 0;
+        background-color: #dadada18;
+    }
 	td, th {
-		border:1px solid black;
-		text-align:center;
+		border: 1px solid rgb(245, 222, 117);
+		text-align: center;
 	}
 	th {
-		color:white;
-		height:50px;
-		font-family:Arial,Helvetica;
-		font-size:24px;
+		height: 10mm;
+        vertical-align: middle;
+		font-size: medium;
 	}
+
+    tr {
+        vertical-align: top;
+    }
+
 	td {
-		background-color:white;
-		width:85px;
-		height:85px;
+		width: 32mm;
+		height: 17mm;
+        padding: 4mm 2mm 2mm 2mm;
+        font-size: small;
+        position: relative;
 	}
+
+    p.td-name-field {
+        position: absolute;
+        bottom: 0;
+        margin: 0 0 1mm 0;
+    }
+
 	.freespace {
 		font-size:smaller;
 	}
@@ -79,13 +116,17 @@
     }
 </style>
 <style type="text/css" media="print">
-	h1, form, #footer { display:none }
+	h2, form, #footer { display:none }
 </style>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 <script type="text/javascript">
 /*jslint browser: true, devel: true */
 /* global $ */
+
+
+
+
 
 var dauber = {
     // If the target bingo card square has a daub, remove it. Otherwise, add a daub
@@ -118,7 +159,7 @@ var dauber = {
 };
 
 var bingoGenerator = {
-    pageBreaks: 'on', // automatically inserts a page break after every 2 cards
+    pageBreaks: 'off', // automatically inserts a page break after every 2 cards
 
     // Given an array, return the array minus any empty elements
     removeEmptyElements: function (arr) {
@@ -179,16 +220,17 @@ var bingoGenerator = {
         }
 
         // Output
-        output = '<table><thead><tr><th colspan="' + width + '">' + title + '</th></tr></thead>';
+        output = '<div class="page-div"><h1>Hochzeitsbingo</h1>'
+        output += '<table><thead><tr><th colspan="' + width + '">' + title + '</th></tr></thead>';
         output += '<tbody>';
         for (i = 0; i < height; i += 1) {
             output += '<tr>';
             for (j = 0; j < width; j += 1) {
-                output += '<td>' + spaces.shift() + '</td>';
+                output += '<td>' + spaces.shift() + '<p class="td-name-field">Name: __________</p></td>';
             }
             output += '</tr>';
         }
-        output += "</tbody></table>";
+        output += "</tbody></table></div>";
         $("#results").append(output);
     },
 
@@ -333,7 +375,7 @@ var bingoGenerator = {
         }
         if (!(qs.title === undefined) && !(qs.words === undefined)) {
             bingoGenerator.generate();
-            dauber.init();
+            //dauber.init();
         }
     }
 };
@@ -342,21 +384,21 @@ $(document).ready(bingoGenerator.checkQS);
 </script>
 </head>
 <body>
-<h1>Make your own bingo cards</h1>
+<h2>Make your own bingo cards</h2>
 <form action="#results" method="get"><!-- onsubmit="generate();return false;" -->
-	<p id="intro">I've provided a sample to create bingo cards for a day in the park. You can enter your own settings to create your own custom bingo cards.</p>
+	<p id="intro">Custom values for our wedding party 2023</p>
 	<fieldset>
-		<legend>Bingo Card Basics</legend>
-		<label>Card Title <input type="text" name="title" id="title" value="Day in the Park Bingo"></label>
-		<label>Word List (separated by commas)</label><textarea cols="60" rows="8" name="words" id="words">Flowers,Bees,Picnickers,Ants,Little Kid Crying,Holding Hands,Person Napping,A Balloon,Dogs,Frisbee,Stroller,Chess Players,Rollerskates,Musician,Juggler,Photographer,Painter,Plastic Bag in Tree,Squirrel,Pigeon,Bicycle Built for Two,Ice Cream,Sunbather,Person Reading Newspaper,Person Listening to Radio,Sidewalk Chalk,Hopscotch</textarea>
+		<legend>Bingo Card Values</legend>
+		<label>Card Title <input type="text" name="title" id="title" value="Finde jeweils eine Person, die…"></label>
+		<label>Word List (separated by commas)</label><textarea cols="60" rows="8" name="words" id="words">...mit der Braut zur Schule ging,...mit dem Bräutigam zur Schule ging,...die Braut länger als 30 Jahre kennt,...mehr als 2 Stunden Anreise hatte,...selbst länger als 25 Jahre verheiratet ist,...größer als der Bräutigam ist,...schon mit dem Brautpaar im Urlaub war,...ein Tattoo besitzt,...eine andere Muttersprache spricht,...Arbeitskolleg*in von Braut oder Bräutigam ist,...ein Instrument spielt,...eine/mehrere Katzen als Haustier hat,... einen Doktortitel hat,...die gleiche Augenfarbe wie du hat,...segeln kann,...vegan lebt</textarea>
 	</fieldset>	
 
 	<fieldset>
 		<legend>Free Space</legend>
 		<label>Include a free space? 
 			<select name="freespace" id="freespace">
-				<option value="true" selected="selected">Yes</option>
-				<option value="false">No</option>
+				<option value="false">Yes</option>
+				<option value="false" selected="selected">No</option>
 			</select>
 		</label>
 		<label>Free Space Text <input type="text" name="freespaceValue" id="freespaceValue" value="Park Bench"></label>
@@ -371,16 +413,16 @@ $(document).ready(bingoGenerator.checkQS);
 
 	<fieldset>
 		<legend>Card Size</legend>
-		<p>A 5x5 bingo card is traditional, but you can try other sizes</p>
-		<label>Number of Squares Wide <input type="text" name="width" id="width" value="5"></label>
-		<label>Number of Squares Tall <input type="text" name="height" id="height" value="5"></label>
+		<p>We will use a 4x4 bingo for the wedding ...</p>
+		<label>Number of Squares Wide <input type="text" name="width" id="width" value="4"></label>
+		<label>Number of Squares Tall <input type="text" name="height" id="height" value="4"></label>
 	</fieldset>
 
 	
 	<fieldset>
 		<legend>Printing Options</legend>
 		<p>Select the <em>landscape</em> page layout when printing for best results</p>
-		<label>Number of cards to create <input type="text" name="number" id="number" value="10"></label>
+		<label>Number of cards to create <input type="text" name="number" id="number" value="100"></label>
 	</fieldset>
 	<label><input type="submit" value="Generate Bingo Cards"></label>
 </form>
@@ -392,16 +434,6 @@ $(document).ready(bingoGenerator.checkQS);
 <a href="/bingo-card-generator/faq.html">Questions?</a> Comments? Contact chris @ osric . com
 </div>
 
-<script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-19082249-1']);
-  _gaq.push(['_trackPageview']);
 
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-</script>
 </body>
 </html>
